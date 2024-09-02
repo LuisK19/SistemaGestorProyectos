@@ -59,12 +59,39 @@ namespace SistemaGestorProyectos
             tabPersonasPorProyecto.Controls.Add(formPersonaPorProyecto);
             formPersonaPorProyecto.Show();
 
+            TabPage tabEmpleados = new TabPage("Empleados");
+            FormEmpleados formEmpleados = new FormEmpleados();
+            formEmpleados.TopLevel = false;
+            formEmpleados.Dock = DockStyle.Fill;
+            formEmpleados.FormBorderStyle = FormBorderStyle.None;
+            tabEmpleados.Controls.Add(formEmpleados);
+            formEmpleados.Show();
+
+            TabPage tabVerDepartamentos = new TabPage("Ver Departamentos");
+            FormVerDepartamentos formVerDepartamentos = new FormVerDepartamentos();
+            formVerDepartamentos.TopLevel = false;
+            formVerDepartamentos.Dock = DockStyle.Fill;
+            formVerDepartamentos.FormBorderStyle = FormBorderStyle.None;
+            tabVerDepartamentos.Controls.Add(formVerDepartamentos);
+            formVerDepartamentos.Show();
+
+            TabPage tabVerProyectos = new TabPage("Ver Proyectos");
+            FormVerProyectos formVerProyectos = new FormVerProyectos();
+            formVerProyectos.TopLevel = false;
+            formVerProyectos.Dock = DockStyle.Fill;
+            formVerProyectos.FormBorderStyle = FormBorderStyle.None;
+            tabVerProyectos.Controls.Add(formVerProyectos);
+            formVerProyectos.Show();
+
             // Agregar las pestañas al TabControl
             tabControl.TabPages.Add(tabProyectos);
             tabControl.TabPages.Add(tabDepartamentos);
             tabControl.TabPages.Add(tabActividades);
             tabControl.TabPages.Add(tabSeguimientoActividades);
             tabControl.TabPages.Add(tabPersonasPorProyecto);
+            tabControl.TabPages.Add(tabEmpleados);
+            tabControl.TabPages.Add(tabVerDepartamentos);
+            tabControl.TabPages.Add(tabVerProyectos);
 
             // Agregar el TabControl al formulario principal
             this.Controls.Add(tabControl);
