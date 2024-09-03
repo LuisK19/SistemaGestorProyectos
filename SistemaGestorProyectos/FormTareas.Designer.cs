@@ -43,9 +43,10 @@
             // 
             // btnAgregar
             // 
-            this.btnAgregar.Location = new System.Drawing.Point(25, 263);
+            this.btnAgregar.Location = new System.Drawing.Point(33, 324);
+            this.btnAgregar.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnAgregar.Name = "btnAgregar";
-            this.btnAgregar.Size = new System.Drawing.Size(75, 23);
+            this.btnAgregar.Size = new System.Drawing.Size(100, 28);
             this.btnAgregar.TabIndex = 0;
             this.btnAgregar.Text = "Agregar";
             this.btnAgregar.UseVisualStyleBackColor = true;
@@ -54,80 +55,90 @@
             // dgvTareas
             // 
             this.dgvTareas.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvTareas.Location = new System.Drawing.Point(172, 32);
+            this.dgvTareas.Location = new System.Drawing.Point(229, 39);
+            this.dgvTareas.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.dgvTareas.Name = "dgvTareas";
-            this.dgvTareas.Size = new System.Drawing.Size(574, 375);
+            this.dgvTareas.RowHeadersWidth = 51;
+            this.dgvTareas.Size = new System.Drawing.Size(765, 462);
             this.dgvTareas.TabIndex = 1;
             // 
             // txtNombreTarea
             // 
-            this.txtNombreTarea.Location = new System.Drawing.Point(25, 48);
+            this.txtNombreTarea.Location = new System.Drawing.Point(33, 59);
+            this.txtNombreTarea.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtNombreTarea.Name = "txtNombreTarea";
-            this.txtNombreTarea.Size = new System.Drawing.Size(100, 20);
+            this.txtNombreTarea.Size = new System.Drawing.Size(132, 22);
             this.txtNombreTarea.TabIndex = 2;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(25, 32);
+            this.label1.Location = new System.Drawing.Point(33, 39);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(98, 13);
+            this.label1.Size = new System.Drawing.Size(125, 16);
             this.label1.TabIndex = 3;
             this.label1.Text = "Nombe de la Tarea";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(25, 87);
+            this.label2.Location = new System.Drawing.Point(33, 107);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(120, 13);
+            this.label2.Size = new System.Drawing.Size(152, 16);
             this.label2.TabIndex = 5;
             this.label2.Text = "Descripcion de la Tarea";
             // 
             // txtDescripcionTarea
             // 
-            this.txtDescripcionTarea.Location = new System.Drawing.Point(25, 106);
+            this.txtDescripcionTarea.Location = new System.Drawing.Point(33, 130);
+            this.txtDescripcionTarea.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtDescripcionTarea.Name = "txtDescripcionTarea";
-            this.txtDescripcionTarea.Size = new System.Drawing.Size(100, 20);
+            this.txtDescripcionTarea.Size = new System.Drawing.Size(132, 22);
             this.txtDescripcionTarea.TabIndex = 4;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(25, 144);
+            this.label3.Location = new System.Drawing.Point(33, 177);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(94, 13);
+            this.label3.Size = new System.Drawing.Size(118, 16);
             this.label3.TabIndex = 7;
             this.label3.Text = "Horas de Esfuerzo";
             // 
             // txtHorasEsfuerzo
             // 
-            this.txtHorasEsfuerzo.Location = new System.Drawing.Point(25, 163);
+            this.txtHorasEsfuerzo.Location = new System.Drawing.Point(33, 201);
+            this.txtHorasEsfuerzo.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtHorasEsfuerzo.Name = "txtHorasEsfuerzo";
-            this.txtHorasEsfuerzo.Size = new System.Drawing.Size(100, 20);
+            this.txtHorasEsfuerzo.Size = new System.Drawing.Size(132, 22);
             this.txtHorasEsfuerzo.TabIndex = 6;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(25, 200);
+            this.label4.Location = new System.Drawing.Point(33, 234);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(28, 13);
+            this.label4.Size = new System.Drawing.Size(35, 16);
             this.label4.TabIndex = 9;
             this.label4.Text = "Tipo";
             // 
             // txtTipoTarea
             // 
-            this.txtTipoTarea.Location = new System.Drawing.Point(25, 219);
+            this.txtTipoTarea.Location = new System.Drawing.Point(33, 258);
+            this.txtTipoTarea.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.txtTipoTarea.Name = "txtTipoTarea";
-            this.txtTipoTarea.Size = new System.Drawing.Size(100, 20);
+            this.txtTipoTarea.Size = new System.Drawing.Size(132, 22);
             this.txtTipoTarea.TabIndex = 8;
             // 
             // FormTareas
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(1067, 554);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.txtTipoTarea);
             this.Controls.Add(this.label3);
@@ -138,8 +149,10 @@
             this.Controls.Add(this.txtNombreTarea);
             this.Controls.Add(this.dgvTareas);
             this.Controls.Add(this.btnAgregar);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "FormTareas";
             this.Text = "FormTareas";
+            this.Load += new System.EventHandler(this.FormTareas_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvTareas)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

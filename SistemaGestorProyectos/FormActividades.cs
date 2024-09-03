@@ -5,17 +5,25 @@ using System.Windows.Forms;
 
 namespace SistemaGestorProyectos
 {
+    /// <summary>
+    /// Formulario para la gestión de actividades en el sistema de proyectos.
+    /// Permite visualizar, agregar y eliminar actividades asociadas a tareas y empleados.
+    /// </summary>
     public partial class FormActividades : Form
     {
         private string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["ConexionSQL"].ConnectionString;
 
+        /// <summary>
+        /// Constructor del formulario FormActividades.
+        /// Inicializa los componentes del formulario, carga datos en los controles y configura los formatos de fecha.
+        /// </summary>
         public FormActividades()
         {
             InitializeComponent();
             LoadActividades();
             LoadTareas();
             LoadEmpleados();
-            InitializeEtapas(); // Inicializar las etapas en el ComboBox
+            InitializeEtapas(); // Inicializa las etapas en el ComboBox
             dtpFechaHoraInicio.Format = DateTimePickerFormat.Custom;
             dtpFechaHoraInicio.CustomFormat = "dd/MM/yyyy HH:mm";
 
@@ -23,11 +31,14 @@ namespace SistemaGestorProyectos
             dtpFechaHoraFin.CustomFormat = "dd/MM/yyyy HH:mm";
         }
 
+        /// <summary>
+        /// Carga las actividades desde la base de datos y las muestra en el DataGridView.
+        /// </summary>
         private void LoadActividades()
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string query = "SELECT * FROM Actividades";
+                string query = "SELECT * FROM Actividad";
                 SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                 DataTable dt = new DataTable();
                 adapter.Fill(dt);
@@ -35,11 +46,14 @@ namespace SistemaGestorProyectos
             }
         }
 
+        /// <summary>
+        /// Carga las tareas desde la base de datos y las muestra en el ComboBox.
+        /// </summary>
         private void LoadTareas()
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string query = "SELECT TareaID, NombreTarea FROM Tareas";
+                string query = "SELECT TareaID, NombreTarea FROM Tarea";
                 SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                 DataTable dt = new DataTable();
                 adapter.Fill(dt);
@@ -49,29 +63,38 @@ namespace SistemaGestorProyectos
             }
         }
 
+        /// <summary>
+        /// Carga los empleados desde la base de datos y los muestra en el ComboBox.
+        /// </summary>
         private void LoadEmpleados()
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string query = "SELECT EmpleadoID, Nombre FROM Empleados";
+                string query = "SELECT CedulaEmpleado, Nombre + ' ' + Apellidos AS NombreCompleto FROM Empleado";
                 SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                 DataTable dt = new DataTable();
                 adapter.Fill(dt);
                 cbEmpleados.DataSource = dt;
-                cbEmpleados.DisplayMember = "Nombre";
-                cbEmpleados.ValueMember = "EmpleadoID";
+                cbEmpleados.DisplayMember = "NombreCompleto";
+                cbEmpleados.ValueMember = "CedulaEmpleado";
             }
         }
 
+        /// <summary>
+        /// Inicializa el ComboBox de etapas con las opciones permitidas.
+        /// </summary>
         private void InitializeEtapas()
         {
-            // Configurar el ComboBox con las opciones permitidas
             cbEtapa.Items.Add("Testing");
             cbEtapa.Items.Add("Revisión");
             cbEtapa.Items.Add("Finalizada");
             cbEtapa.SelectedIndex = 0; // Establecer el valor predeterminado (opcional)
         }
 
+        /// <summary>
+        /// Maneja el evento de clic del botón Agregar.
+        /// Valida los datos ingresados, los inserta en la base de datos y recarga las actividades.
+        /// </summary>
         private void btnAgregar_Click(object sender, EventArgs e)
         {
             // Validaciones
@@ -103,7 +126,7 @@ namespace SistemaGestorProyectos
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string query = "INSERT INTO Actividades (TareaID, EmpleadoID, FechaHoraInicio, FechaHoraFin, Horas, Tipo, Etapa) VALUES (@TareaID, @EmpleadoID, @FechaHoraInicio, @FechaHoraFin, @Horas, @Tipo, @Etapa)";
+                string query = "INSERT INTO Actividad (TareaID, CedulaEmpleado, FechaHoraInicio, FechaHoraFin, Horas, Tipo, Etapa) VALUES (@TareaID, @EmpleadoID, @FechaHoraInicio, @FechaHoraFin, @Horas, @Tipo, @Etapa)";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@TareaID", cbTareas.SelectedValue);
                 cmd.Parameters.AddWithValue("@EmpleadoID", cbEmpleados.SelectedValue);
@@ -120,6 +143,10 @@ namespace SistemaGestorProyectos
             }
         }
 
+        /// <summary>
+        /// Maneja el evento de clic del botón Eliminar.
+        /// Elimina la actividad seleccionada en el DataGridView y recarga la lista de actividades.
+        /// </summary>
         private void btnEliminar_Click_1(object sender, EventArgs e)
         {
             if (dgvActividades.SelectedRows.Count > 0)
@@ -128,7 +155,7 @@ namespace SistemaGestorProyectos
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
-                    string query = "DELETE FROM Actividades WHERE ActividadID = @ActividadID";
+                    string query = "DELETE FROM Actividad WHERE ActividadID = @ActividadID";
                     SqlCommand cmd = new SqlCommand(query, conn);
                     cmd.Parameters.AddWithValue("@ActividadID", actividadID);
 
@@ -143,7 +170,5 @@ namespace SistemaGestorProyectos
                 MessageBox.Show("Selecciona una fila para eliminar.");
             }
         }
-
     }
-
 }

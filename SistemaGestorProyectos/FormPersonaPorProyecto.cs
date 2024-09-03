@@ -1,60 +1,61 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
-using System.Text;
 using System.Windows.Forms;
 
 namespace SistemaGestorProyectos
 {
+    /// <summary>
+    /// Formulario para gestionar la relación entre proyectos y empleados.
+    /// Permite visualizar, agregar y eliminar asignaciones de empleados a proyectos.
+    /// </summary>
     public partial class FormPersonaPorProyecto : Form
     {
         private string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["ConexionSQL"].ConnectionString;
 
+        /// <summary>
+        /// Constructor del formulario FormPersonaPorProyecto.
+        /// Inicializa los componentes del formulario y carga los datos de proyectos y empleados.
+        /// </summary>
         public FormPersonaPorProyecto()
         {
             InitializeComponent();
-            LoadProyectoEmpleados();
+            LoadProyectosEmpleados();
             LoadProyectos();
             LoadEmpleados();
         }
 
-        private void LoadProyectoEmpleados()
+        /// <summary>
+        /// Carga la relación entre proyectos y empleados en el DataGridView.
+        /// </summary>
+        private void LoadProyectosEmpleados()
         {
-            // Establece la conexión con la base de datos usando la cadena de conexión proporcionada
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                // Consulta SQL para obtener los nombres de los proyectos y empleados, así como sus IDs
                 string query = @"
-            SELECT 
-                p.ProyectoID AS 'ProyectoID',
-                e.EmpleadoID AS 'EmpleadoID',
-                p.NombreProyecto AS 'Nombre del Proyecto', 
-                e.Nombre AS 'Nombre del Empleado' 
-            FROM ProyectoEmpleados pe
-            INNER JOIN Proyectos p ON pe.ProyectoID = p.ProyectoID
-            INNER JOIN Empleados e ON pe.EmpleadoID = e.EmpleadoID";
+                SELECT 
+                    p.ProyectoID AS 'ProyectoID',
+                    e.CedulaEmpleado AS 'EmpleadoID',
+                    p.NombreProyecto AS 'Nombre del Proyecto', 
+                    e.Nombre + ' ' + e.Apellidos AS 'Nombre del Empleado'
+                FROM Proyecto p
+                INNER JOIN Empleado e ON p.CedulaEmpleado = e.CedulaEmpleado";
 
-                // Crea un adaptador de datos para ejecutar la consulta y llenar un DataTable
                 SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
-
-                // Crea un DataTable para almacenar los resultados de la consulta
                 DataTable dt = new DataTable();
-
-                // Llena el DataTable con los datos obtenidos de la consulta
                 adapter.Fill(dt);
-
-                // Asigna el DataTable como origen de datos para el DataGridView
                 dgvPersonaPorProyecto.DataSource = dt;
             }
         }
 
-
-
+        /// <summary>
+        /// Carga los proyectos disponibles en el ComboBox.
+        /// </summary>
         private void LoadProyectos()
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string query = "SELECT ProyectoID, NombreProyecto FROM Proyectos";
+                string query = "SELECT ProyectoID, NombreProyecto FROM Proyecto";
                 SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                 DataTable dt = new DataTable();
                 adapter.Fill(dt);
@@ -64,23 +65,29 @@ namespace SistemaGestorProyectos
             }
         }
 
+        /// <summary>
+        /// Carga los empleados disponibles en el ComboBox.
+        /// </summary>
         private void LoadEmpleados()
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string query = "SELECT EmpleadoID, Nombre FROM Empleados";
+                string query = "SELECT CedulaEmpleado, Nombre + ' ' + Apellidos AS NombreCompleto FROM Empleado";
                 SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                 DataTable dt = new DataTable();
                 adapter.Fill(dt);
                 cbEmpleados.DataSource = dt;
-                cbEmpleados.DisplayMember = "Nombre";
-                cbEmpleados.ValueMember = "EmpleadoID";
+                cbEmpleados.DisplayMember = "NombreCompleto";
+                cbEmpleados.ValueMember = "CedulaEmpleado";
             }
         }
 
-        private void btnAgregar_Click_1(object sender, EventArgs e)
+        /// <summary>
+        /// Maneja el evento de clic del botón Agregar.
+        /// Asocia un empleado seleccionado con un proyecto.
+        /// </summary>
+        private void btnAgregar_Click(object sender, EventArgs e)
         {
-            // Validar que se ha seleccionado un proyecto y un empleado
             if (cbProyectos.SelectedValue == null || cbEmpleados.SelectedValue == null)
             {
                 MessageBox.Show("Por favor, selecciona un proyecto y un empleado.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -89,7 +96,7 @@ namespace SistemaGestorProyectos
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string query = "INSERT INTO ProyectoEmpleados (ProyectoID, EmpleadoID) VALUES (@ProyectoID, @EmpleadoID)";
+                string query = "UPDATE Proyecto SET CedulaEmpleado = @EmpleadoID WHERE ProyectoID = @ProyectoID";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@ProyectoID", cbProyectos.SelectedValue);
                 cmd.Parameters.AddWithValue("@EmpleadoID", cbEmpleados.SelectedValue);
@@ -99,7 +106,7 @@ namespace SistemaGestorProyectos
                     conn.Open();
                     cmd.ExecuteNonQuery();
                     conn.Close();
-                    LoadProyectoEmpleados();
+                    LoadProyectosEmpleados();
                 }
                 catch (Exception ex)
                 {
@@ -107,13 +114,18 @@ namespace SistemaGestorProyectos
                 }
             }
         }
-        private void btnEliminar_Click_1(object sender, EventArgs e)
+
+        /// <summary>
+        /// Maneja el evento de clic del botón Eliminar.
+        /// Elimina la asignación de un empleado a un proyecto.
+        /// </summary>
+        private void btnEliminar_Click(object sender, EventArgs e)
         {
             if (IsRowSelected(out int proyectoID, out int empleadoID))
             {
                 if (DeletePersonaPorProyecto(proyectoID, empleadoID))
                 {
-                    LoadProyectoEmpleados();
+                    LoadProyectosEmpleados();
                 }
                 else
                 {
@@ -126,20 +138,21 @@ namespace SistemaGestorProyectos
             }
         }
 
+        /// <summary>
+        /// Verifica si una fila está seleccionada en el DataGridView y obtiene los IDs de proyecto y empleado.
+        /// </summary>
+        /// <param name="proyectoID">ID del proyecto seleccionado.</param>
+        /// <param name="empleadoID">ID del empleado seleccionado.</param>
+        /// <returns>True si se seleccionó una fila y se obtuvieron los IDs; de lo contrario, false.</returns>
         private bool IsRowSelected(out int proyectoID, out int empleadoID)
         {
-            // Inicializar los valores de salida
             proyectoID = 0;
             empleadoID = 0;
 
-            // Verificar que se ha seleccionado una fila en el DataGridView
             if (dgvPersonaPorProyecto.SelectedRows.Count > 0)
             {
-                // Obtener el DataGridViewRow seleccionado
                 DataGridViewRow selectedRow = dgvPersonaPorProyecto.SelectedRows[0];
 
-                // Obtener los valores de ID usando los nombres de las columnas actuales
-                // Asegúrate de que los nombres de las columnas en el DataGridView coincidan con los usados aquí
                 if (selectedRow.Cells["ProyectoID"] != null && selectedRow.Cells["EmpleadoID"] != null)
                 {
                     proyectoID = Convert.ToInt32(selectedRow.Cells["ProyectoID"].Value);
@@ -155,41 +168,35 @@ namespace SistemaGestorProyectos
             return false;
         }
 
-
-
-
+        /// <summary>
+        /// Elimina la relación entre un proyecto y un empleado.
+        /// </summary>
+        /// <param name="proyectoID">ID del proyecto.</param>
+        /// <param name="empleadoID">ID del empleado.</param>
+        /// <returns>True si la eliminación fue exitosa; de lo contrario, false.</returns>
         private bool DeletePersonaPorProyecto(int proyectoID, int empleadoID)
         {
             try
             {
-                // Establecer la conexión con la base de datos
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
-                    // Consulta para eliminar el registro
-                    string query = "DELETE FROM PersonaPorProyecto WHERE ProyectoID = @ProyectoID AND EmpleadoID = @EmpleadoID";
+                    string query = "UPDATE Proyecto SET CedulaEmpleado = NULL WHERE ProyectoID = @ProyectoID AND CedulaEmpleado = @EmpleadoID";
                     SqlCommand cmd = new SqlCommand(query, conn);
                     cmd.Parameters.AddWithValue("@ProyectoID", proyectoID);
                     cmd.Parameters.AddWithValue("@EmpleadoID", empleadoID);
 
-                    // Abrir la conexión y ejecutar el comando
                     conn.Open();
                     int rowsAffected = cmd.ExecuteNonQuery();
                     conn.Close();
 
-                    // Verificar si se eliminó alguna fila
                     return rowsAffected > 0;
                 }
             }
             catch (Exception ex)
             {
-                // Mostrar un mensaje de error si ocurre una excepción
                 MessageBox.Show($"Error al eliminar la relación: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
         }
-
-
-
-
     }
 }

@@ -1,92 +1,98 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SistemaGestorProyectos
 {
+    /// <summary>
+    /// Formulario para la gestión de departamentos en el sistema de proyectos.
+    /// Permite visualizar, agregar y eliminar departamentos.
+    /// </summary>
     public partial class FormDepartamentos : Form
     {
         private string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["ConexionSQL"].ConnectionString;
 
+        /// <summary>
+        /// Constructor del formulario FormDepartamentos.
+        /// Inicializa los componentes del formulario y carga los datos en los controles.
+        /// </summary>
         public FormDepartamentos()
         {
             InitializeComponent();
             LoadDepartamentos();
-
         }
 
-
+        /// <summary>
+        /// Carga los departamentos y los empleados desde la base de datos.
+        /// Muestra los departamentos en el DataGridView y los empleados en el ComboBox.
+        /// </summary>
         private void LoadDepartamentos()
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-
                 conn.Open();
 
                 // Cargar los departamentos en el DataGridView
-                string queryDepartamentos = "SELECT * FROM Departamentos";
-                using (SqlDataAdapter adapterDepartamentos = new SqlDataAdapter(queryDepartamentos, conn))
+                string queryDepartamento = "SELECT * FROM Departamento";
+                using (SqlDataAdapter adapterDepartamento = new SqlDataAdapter(queryDepartamento, conn))
                 {
-                    DataTable dtDepartamentos = new DataTable();
-                    adapterDepartamentos.Fill(dtDepartamentos);
-                    dgvDepartamentos.DataSource = dtDepartamentos;
+                    DataTable dtDepartamento = new DataTable();
+                    adapterDepartamento.Fill(dtDepartamento);
+                    dgvDepartamentos.DataSource = dtDepartamento;
                 }
 
                 // Cargar los empleados en el ComboBox
-                string queryEmpleados = "SELECT EmpleadoID, Nombre + ' ' + Apellido AS NombreCompleto FROM Empleados";
+                string queryEmpleados = "SELECT CedulaEmpleado, Nombre + ' ' + Apellidos AS NombreCompleto FROM Empleado";
                 using (SqlDataAdapter adapterEmpleados = new SqlDataAdapter(queryEmpleados, conn))
                 {
                     DataTable dtEmpleados = new DataTable();
                     adapterEmpleados.Fill(dtEmpleados);
                     comboJefe.DataSource = dtEmpleados;
                     comboJefe.DisplayMember = "NombreCompleto";
-                    comboJefe.ValueMember = "EmpleadoID";
+                    comboJefe.ValueMember = "CedulaEmpleado";
                 }
             }
         }
 
-
+        /// <summary>
+        /// Maneja el evento de clic del botón Agregar.
+        /// Valida el nombre del departamento ingresado, lo inserta en la base de datos y recarga la lista de departamentos.
+        /// </summary>
         private void btnAgregar_Click_1(object sender, EventArgs e)
         {
-            MessageBox.Show("Agregando departamento...");
-            if (string.IsNullOrEmpty(txtCodigoDepartamento.Text) || string.IsNullOrEmpty(txtNombreDepartamento.Text))
+            if (string.IsNullOrEmpty(txtNombreDepartamento.Text))
             {
-                MessageBox.Show("Por favor, completa todos los campos.");
+                MessageBox.Show("Por favor, ingresa un nombre para el departamento.");
                 return;
             }
-            MessageBox.Show("Campos completos.");
+
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string query = "INSERT INTO Departamentos (CodigoDepartamento, NombreDepartamento, JefeEmpleadoID) VALUES (@Codigo, @Nombre, @Jefe)";
+                string query = "INSERT INTO Departamento (NombreDepartamento, CedulaJefe) VALUES (@Nombre, @Jefe)";
                 SqlCommand command = new SqlCommand(query, conn);
-                command.Parameters.AddWithValue("@Codigo", txtCodigoDepartamento.Text);
-                command.Parameters.AddWithValue("@Nombre", txtNombreDepartamento.Text);
+                command.Parameters.AddWithValue("@Nombre", txtNombreDepartamento.Text.Trim());
                 command.Parameters.AddWithValue("@Jefe", Convert.ToInt32(comboJefe.SelectedValue));
 
                 conn.Open();
                 int result = command.ExecuteNonQuery();
 
-                // Verificar si se agregó correctamente
                 if (result > 0)
                 {
                     MessageBox.Show("Departamento agregado exitosamente.");
-                    // Aquí podrías querer recargar los datos en el DataGridView
+                    LoadDepartamentos();
                 }
                 else
                 {
                     MessageBox.Show("Ocurrió un error al agregar el departamento.");
                 }
-                MessageBox.Show("Departamento agregado correctamente.");
             }
         }
 
+        /// <summary>
+        /// Maneja el evento de clic del botón Eliminar.
+        /// Elimina el departamento seleccionado en el DataGridView y recarga la lista de departamentos.
+        /// </summary>
         private void btnEliminar_Click_1(object sender, EventArgs e)
         {
             if (dgvDepartamentos.SelectedRows.Count > 0)
@@ -95,13 +101,12 @@ namespace SistemaGestorProyectos
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
-                    string query = "DELETE FROM Departamentos WHERE DepartamentoID = @DepartamentoID";
+                    string query = "DELETE FROM Departamento WHERE DepartamentoID = @DepartamentoID";
                     SqlCommand cmd = new SqlCommand(query, conn);
                     cmd.Parameters.AddWithValue("@DepartamentoID", departamentoID);
 
                     conn.Open();
                     cmd.ExecuteNonQuery();
-                    conn.Close();
                     LoadDepartamentos();
                 }
             }
@@ -111,11 +116,13 @@ namespace SistemaGestorProyectos
             }
         }
 
+        /// <summary>
+        /// Maneja el evento de clic del botón Actualizar.
+        /// Recarga la lista de departamentos desde la base de datos.
+        /// </summary>
         private void button1_Click(object sender, EventArgs e)
         {
             LoadDepartamentos();
-
         }
     }
-
 }

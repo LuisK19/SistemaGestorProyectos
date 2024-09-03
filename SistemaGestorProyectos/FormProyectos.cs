@@ -1,32 +1,38 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SistemaGestorProyectos
 {
+    /// <summary>
+    /// Formulario para gestionar los proyectos en el sistema.
+    /// Permite visualizar, agregar y actualizar proyectos.
+    /// </summary>
     public partial class FormProyectos : Form
     {
         private string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["ConexionSQL"].ConnectionString;
 
+        /// <summary>
+        /// Constructor del formulario FormProyectos.
+        /// Inicializa los componentes del formulario y carga los datos de proyectos, departamentos y empleados.
+        /// </summary>
         public FormProyectos()
         {
             InitializeComponent();
             LoadProyectos();
             LoadDepartamentos();
+            LoadEmpleados();
         }
 
+        /// <summary>
+        /// Carga la lista de proyectos en el DataGridView.
+        /// </summary>
         private void LoadProyectos()
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string query = "SELECT * FROM Proyectos";
+                string query = "SELECT ProyectoID, NombreProyecto, NombrePortafolio, Año, Trimestre, Descripcion, Tipo, FechaProyectadaInicio, FechaProyectadaCierre, DepartamentoID FROM Proyecto";
                 SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                 DataTable dt = new DataTable();
                 adapter.Fill(dt);
@@ -34,11 +40,14 @@ namespace SistemaGestorProyectos
             }
         }
 
+        /// <summary>
+        /// Carga los departamentos disponibles en el ComboBox.
+        /// </summary>
         private void LoadDepartamentos()
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string query = "SELECT DepartamentoID, NombreDepartamento FROM Departamentos";
+                string query = "SELECT DepartamentoID, NombreDepartamento FROM Departamento";
                 SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                 DataTable dt = new DataTable();
                 adapter.Fill(dt);
@@ -48,6 +57,27 @@ namespace SistemaGestorProyectos
             }
         }
 
+        /// <summary>
+        /// Carga los empleados disponibles en el ComboBox.
+        /// </summary>
+        private void LoadEmpleados()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "SELECT CedulaEmpleado, Nombre + ' ' + Apellidos AS NombreCompleto FROM Empleado";
+                SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+                DataTable dt = new DataTable();
+                adapter.Fill(dt);
+                cbEmpleados.DataSource = dt;
+                cbEmpleados.DisplayMember = "NombreCompleto";
+                cbEmpleados.ValueMember = "CedulaEmpleado";
+            }
+        }
+
+        /// <summary>
+        /// Maneja el evento de clic del botón Agregar.
+        /// Valida los campos del formulario y agrega un nuevo proyecto a la base de datos.
+        /// </summary>
         private void btnAgregar_Click_1(object sender, EventArgs e)
         {
             // Validar que los campos obligatorios no estén vacíos
@@ -93,12 +123,23 @@ namespace SistemaGestorProyectos
                 return;
             }
 
+            if (cbEmpleados.SelectedValue == null)
+            {
+                MessageBox.Show("Por favor, selecciona un empleado para el proyecto.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cbEmpleados.Focus();
+                return;
+            }
+
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 try
                 {
-                    string query = "INSERT INTO Proyectos (Portafolio, NombreProyecto, Año, Trimestre, Descripción, Tipo, FechaInicio, FechaCierre, DepartamentoID) " +
-                                   "VALUES (@Portafolio, @Nombre, @Año, @Trimestre, @Descripcion, @Tipo, @FechaInicio, @FechaCierre, @DepartamentoID)";
+                    // Obtener el empleado seleccionado
+                    int empleadoSeleccionado = Convert.ToInt32(cbEmpleados.SelectedValue);
+
+                    // Crear el comando SQL para insertar el proyecto
+                    string query = "INSERT INTO Proyecto (NombrePortafolio, NombreProyecto, Año, Trimestre, Descripcion, Tipo, FechaProyectadaInicio, FechaProyectadaCierre, DepartamentoID, CedulaEmpleado) " +
+                                   "VALUES (@Portafolio, @Nombre, @Año, @Trimestre, @Descripcion, @Tipo, @FechaInicio, @FechaCierre, @DepartamentoID, @CedulaEmpleado)";
                     SqlCommand cmd = new SqlCommand(query, conn);
                     cmd.Parameters.AddWithValue("@Portafolio", txtPortafolio.Text.Trim());
                     cmd.Parameters.AddWithValue("@Nombre", txtNombreProyecto.Text.Trim());
@@ -109,6 +150,7 @@ namespace SistemaGestorProyectos
                     cmd.Parameters.AddWithValue("@FechaInicio", dtpFechaInicio.Value);
                     cmd.Parameters.AddWithValue("@FechaCierre", dtpFechaCierre.Value);
                     cmd.Parameters.AddWithValue("@DepartamentoID", cbDepartamento.SelectedValue);
+                    cmd.Parameters.AddWithValue("@CedulaEmpleado", empleadoSeleccionado);
 
                     conn.Open();
                     int result = cmd.ExecuteNonQuery();
@@ -130,11 +172,10 @@ namespace SistemaGestorProyectos
             }
         }
 
-        private void FormProyectos_Load(object sender, EventArgs e)
-        {
-
-        }
-
+        /// <summary>
+        /// Maneja el evento de clic del botón Actualizar.
+        /// Recarga los datos de proyectos en el DataGridView.
+        /// </summary>
         private void button1_Click(object sender, EventArgs e)
         {
             LoadProyectos();

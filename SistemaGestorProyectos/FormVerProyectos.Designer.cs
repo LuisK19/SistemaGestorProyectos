@@ -35,17 +35,20 @@
             // dgvVerProyectos
             // 
             this.dgvVerProyectos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvVerProyectos.Location = new System.Drawing.Point(25, 22);
+            this.dgvVerProyectos.Location = new System.Drawing.Point(13, 13);
+            this.dgvVerProyectos.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.dgvVerProyectos.Name = "dgvVerProyectos";
-            this.dgvVerProyectos.Size = new System.Drawing.Size(763, 416);
+            this.dgvVerProyectos.RowHeadersWidth = 51;
+            this.dgvVerProyectos.Size = new System.Drawing.Size(1041, 528);
             this.dgvVerProyectos.TabIndex = 0;
             // 
             // FormVerProyectos
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(1067, 554);
             this.Controls.Add(this.dgvVerProyectos);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "FormVerProyectos";
             this.Text = "FormVerProyectos";
             ((System.ComponentModel.ISupportInitialize)(this.dgvVerProyectos)).EndInit();

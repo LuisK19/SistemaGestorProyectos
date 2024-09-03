@@ -11,21 +11,32 @@ using System.Windows.Forms;
 
 namespace SistemaGestorProyectos
 {
+    /// <summary>
+    /// Formulario para gestionar las tareas del proyecto.
+    /// Permite visualizar y agregar nuevas tareas.
+    /// </summary>
     public partial class FormTareas : Form
     {
         private string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["ConexionSQL"].ConnectionString;
 
+        /// <summary>
+        /// Constructor del formulario FormTareas.
+        /// Inicializa los componentes del formulario y carga las tareas.
+        /// </summary>
         public FormTareas()
         {
             InitializeComponent();
             LoadTareas();
         }
 
+        /// <summary>
+        /// Carga la información de las tareas en el DataGridView.
+        /// </summary>
         private void LoadTareas()
         {
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string query = "SELECT * FROM Tareas";
+                string query = "SELECT * FROM Tarea";
                 SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                 DataTable dt = new DataTable();
                 adapter.Fill(dt);
@@ -33,6 +44,10 @@ namespace SistemaGestorProyectos
             }
         }
 
+        /// <summary>
+        /// Maneja el evento de clic del botón Agregar.
+        /// Valida los datos ingresados y agrega una nueva tarea a la base de datos.
+        /// </summary>
         private void btnAgregar_Click(object sender, EventArgs e)
         {
             // Validaciones
@@ -63,7 +78,7 @@ namespace SistemaGestorProyectos
             // Si todas las validaciones pasan, se procede a agregar la tarea
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string query = "INSERT INTO Tareas (NombreTarea, Descripción, HorasEsfuerzo, Tipo) VALUES (@Nombre, @Descripcion, @HorasEsfuerzo, @Tipo)";
+                string query = "INSERT INTO Tarea (NombreTarea, Descripción, HorasEsfuerzo, Tipo) VALUES (@Nombre, @Descripcion, @HorasEsfuerzo, @Tipo)";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@Nombre", txtNombreTarea.Text);
                 cmd.Parameters.AddWithValue("@Descripcion", txtDescripcionTarea.Text);
@@ -85,6 +100,14 @@ namespace SistemaGestorProyectos
                 }
             }
         }
-    }
 
+        /// <summary>
+        /// Maneja el evento de carga del formulario.
+        /// Este método está vacío y puede ser utilizado para inicializaciones adicionales si es necesario.
+        /// </summary>
+        private void FormTareas_Load(object sender, EventArgs e)
+        {
+            // Inicializaciones adicionales pueden ser agregadas aquí.
+        }
+    }
 }
